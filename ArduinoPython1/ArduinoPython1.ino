@@ -10,10 +10,10 @@ Servo pinza;
 String msg; //Variable para recibir mensaje
 int pos = 0; //Variable de posicion para los servos
 // Variables de HOME para los servos
-int home_cero = 0; 
-int home_hombro = 130;
-int home_brazo = 180;
-int home_mano1 = 90;
+int home_mano1 = 180;
+int home_brazo = 73;
+int home_hombro = 18;
+int home_cero = 92; 
 
 void setup() {
   //Asignamos cada servomotor a su PIN
