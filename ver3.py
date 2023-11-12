@@ -7,9 +7,9 @@ import numpy as np
 
 
 # Inciamos comunicación con Arduino vía puerto serie
-
-arduino = serial.Serial("COM8", 9600)
-time.sleep(2)
+arduino = serial.Serial()
+# arduino = serial.Serial("COM6", 9600)
+# time.sleep(2)
 
 
 
@@ -36,20 +36,11 @@ def mov_cuerpo(a):
     a = 's1' + str(val_cuerpo.get()) + '\n'
     arduino.write(a.encode('utf-8'))
 
-    control.after(100,reiniciar_slider_home)
-
-def reiniciar_slider_home():
-    print("Llamando a reiniciar_slider_home")
-    val_cuerpo.set(home_cero)
-    a = 's1' + str(val_cuerpo.get()) + '\n'
-    arduino.write(a.encode('utf-8'))
-    # time.sleep(1)
-    arduino.write(f's1{home_cero}\n'.encode('utf-8'))
-
 
 def mov_hombro(a):
     a = 's2' + str(val_hombro.get()) + '\n'
     arduino.write(a.encode('utf-8'))
+
 
 def mov_brazo(a):
     a = 's3' + str(val_brazo.get()) + '\n'
@@ -258,11 +249,9 @@ to=80,
 orient=HORIZONTAL,
 length=300,
 font=("ProductSans", 14),
-showvalue=True,
+showvalue=False,
 digits=4,
 resolution=10)
-
-
 
 # mano2_s = gui.Scale(control, variable=val_mano2, command=mov_mano2, to=180, orient=HORIZONTAL, length=300,
 #                     label='Pitch: Elevación', font=("ProductSans", 14))
@@ -315,7 +304,6 @@ mano1_s.grid(row=2, column=1, sticky="nsew")        #PINZA
 brazo_s.grid(row=3, column=1, sticky="nsew")        #BRAZO
 hombro_s.grid(row=4, column=1, sticky="nsew")       #HOMBRO
 cuerpo_s.grid(row=5, column=1, sticky="nsew")       #BASE
-
 # mano2_s.grid(row=4, column=0, sticky="nsew")
 # mano3_s.grid(row=5, column=0, sticky="nsew")
 # pinza_s.grid(row=6, column=0, sticky="nsew")
