@@ -7,9 +7,12 @@ import numpy as np
 
 
 # Inciamos comunicación con Arduino vía puerto serie
-arduino = serial.Serial()
-# arduino = serial.Serial("COM6", 9600)
-# time.sleep(2)
+
+
+# arduino = serial.Serial()
+
+arduino = serial.Serial("COM8", 9600)
+time.sleep(2)
 
 
 
@@ -18,7 +21,7 @@ arduino = serial.Serial()
 home_mano1 = 180
 home_brazo = 78
 home_hombro = 20
-home_cero = 91.5
+home_cero = 92
 
 
 
@@ -32,15 +35,26 @@ pos_mano3 = np.linspace(home_cero, home_cero, num=1)
 pos_pinza = np.linspace(home_cero, home_cero, num=1)
 
 # Funciones para mover cada articulación con la barra deslizante
+
 def mov_cuerpo(a):
     a = 's1' + str(val_cuerpo.get()) + '\n'
     arduino.write(a.encode('utf-8'))
+    control.after(100,reiniciar_slider_home)
 
+
+def reiniciar_slider_home():
+    val_cuerpo.set(home_cero)
+    a = 's1' + str(val_cuerpo.get()) + '\n'
+    arduino.write(a.encode('utf-8'))
+    arduino.write(f's1{home_cero}\n'.encode('utf-8'))
+
+
+
+# "Se realizo una funcionalidad en el slider de la base para que funcione como un toggle (fix ref message)
 
 def mov_hombro(a):
     a = 's2' + str(val_hombro.get()) + '\n'
     arduino.write(a.encode('utf-8'))
-
 
 def mov_brazo(a):
     a = 's3' + str(val_brazo.get()) + '\n'
@@ -249,9 +263,11 @@ to=80,
 orient=HORIZONTAL,
 length=300,
 font=("ProductSans", 14),
-showvalue=False,
+showvalue=True,
 digits=4,
 resolution=10)
+
+
 
 # mano2_s = gui.Scale(control, variable=val_mano2, command=mov_mano2, to=180, orient=HORIZONTAL, length=300,
 #                     label='Pitch: Elevación', font=("ProductSans", 14))
@@ -300,15 +316,16 @@ btn_home = gui.Button(text="Ir a home",
                     cursor="target")
 
 # Distribución de cada elemento en la interfaz del robot
-mano1_s.grid(row=2, column=1, sticky="nsew")        #PINZA
-brazo_s.grid(row=3, column=1, sticky="nsew")        #BRAZO
-hombro_s.grid(row=4, column=1, sticky="nsew")       #HOMBRO
-cuerpo_s.grid(row=5, column=1, sticky="nsew")       #BASE
+mano1_s.grid(row=3, column=1, sticky="nsew")        #PINZA
+brazo_s.grid(row=4, column=1, sticky="nsew")        #BRAZO
+hombro_s.grid(row=5, column=1, sticky="nsew")       #HOMBRO
+cuerpo_s.grid(row=6, column=1, sticky="nsew")       #BASE
+
 # mano2_s.grid(row=4, column=0, sticky="nsew")
 # mano3_s.grid(row=5, column=0, sticky="nsew")
 # pinza_s.grid(row=6, column=0, sticky="nsew")
-btn_guardar.grid(row=4, column=4, sticky="nsew")
-btn_run.grid(row=5, column=4, sticky="nsew")
+btn_guardar.grid(row=3, column=4, sticky="nsew")
+btn_run.grid(row=4, column=4, sticky="nsew")
 btn_home.grid(row=6, column=4, sticky="nsew")
 
 fondo = gui.Label(control, image=img).grid(row=1, column=6, sticky="nsew", rowspan=8)                                   #IMAGE
@@ -331,4 +348,3 @@ space07.grid(row=0, column=7, rowspan=8)
 # Ejecuta la interfaz
 control.mainloop()
 
-# git commit -m "cambios en el codigo de arduino para calibrar el brazo, asi mismo calibracion en el codigo de pyhton del servo motor de la base de 360G"
