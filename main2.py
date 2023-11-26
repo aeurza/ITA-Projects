@@ -5,9 +5,9 @@ from tkinter import HORIZONTAL, messagebox
 import time
 import numpy as np
 # Inciamos comunicación con Arduino vía puerto serie
-# arduino = serial.Serial()
-arduino = serial.Serial("COM7", 9600)
-time.sleep(2)
+arduino = serial.Serial()
+# arduino = serial.Serial("COM6", 9600)
+# time.sleep(2)
 
 # Constantes para HOME de cada articulación
 home_cero = 90

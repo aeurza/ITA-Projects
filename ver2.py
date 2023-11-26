@@ -16,10 +16,10 @@ class SerialSimulation:
 
 #!Simula la instancia de comunicación serial
 
-# arduino = SerialSimulation()
+arduino = SerialSimulation()
 
-arduino = serial.Serial("COM6", 9600)
-time.sleep(2)
+# arduino = serial.Serial("COM6", 9600)
+# time.sleep(2)
 
 # Constantes para HOME de cada articulación
 home_base = 90  # Detener el servo en su posición central

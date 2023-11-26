@@ -1,27 +1,21 @@
 # Bibliotecas necesarias
 import serial
 import tkinter as gui
-from tkinter import HORIZONTAL, Label, messagebox
+from tkinter import HORIZONTAL, messagebox
 import time
 import numpy as np
 
+#& Inciamos comunicación con Arduino vía puerto serie %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# arduino = serial.Serial()
 
-# Inciamos comunicación con Arduino vía puerto serie
-arduino = serial.Serial()
-# arduino = serial.Serial("COM6", 9600)
-# time.sleep(2)
-
-
-
+arduino = serial.Serial("COM6", 9600)
+time.sleep(2)
 
 # Constantes para HOME de cada articulación
-home_mano1 = 180
-home_brazo = 78
-home_hombro = 20
-home_cero = 91.5
-
-
-
+home_cero = 90
+home_hombro = 98
+home_brazo = 42
+home_mano1 = 68
 # Vectores de inicio para la posición de cada articulación
 pos_cuerpo = np.linspace(home_cero, home_cero, num=1)
 pos_hombro = np.linspace(home_hombro, home_hombro, num=1)
@@ -125,7 +119,7 @@ def home_robot():
     # Envía todas las articulaciones a posición de HOME
     # Crea interpolación entre la posición actual y la de HOME
     # Se puede modificar los puntos en la variable numpum
-    numpum = 90
+    numpum = 30
     h_cuerpo = np.linspace(val_cuerpo.get(), home_cero, num=numpum)
     h_cuerpo = np.round(h_cuerpo, 0)
     val_cuerpo.set(home_cero)
@@ -184,16 +178,15 @@ def home_robot():
 
 # Instrucciones para la interfaz de usuario
 control = gui.Tk()
-control.title("TEAM ROCKET Ⓡ")
-# control.resizable(0,0)
-control.geometry('1026x461')
+control.title("Arduino Day - Robot Antropomórfico 6GDL")
+control.geometry('800x600')
 control.config(cursor="")
-# control.columnconfigure(0, weight=3)
-img = gui.PhotoImage(file="black-arm.PNG")
-img = img.zoom(2)
-img = img.subsample(5)
+control.columnconfigure(0, weight=3)
+img = gui.PhotoImage(file="Robot1.PNG")
+img = img.zoom(5)
+img = img.subsample(11)
 
-for i in range(20):
+for i in range(7):
     control.rowconfigure(i, weight=1)
 
 # Variables utilizadas para la posición de cada servomotor
@@ -206,129 +199,106 @@ val_mano3 = gui.IntVar(value=home_cero)
 val_pinza = gui.IntVar(value=home_cero)
 
 # Barras deslizantes para el control
-mano1_s = gui.Scale(control,
-label='Pinza',
-variable=val_mano1,
-command=mov_mano1,
-from_=112,
-to=180,
-orient=HORIZONTAL,
-length=300,
-font=("ProductSans", 14),
-showvalue=True)
-
-brazo_s = gui.Scale(control,
-label='Brazo',
-variable=val_brazo,
-command=mov_brazo,
-from_=50,
-to=180,
-orient=HORIZONTAL,
-length=300,
-font=("ProductSans", 14),
-showvalue=True)
+cuerpo_s = gui.Scale(control,
+                     variable=val_cuerpo,
+                     command=mov_cuerpo,
+                     to=97,
+                     from_=83,
+                     orient=HORIZONTAL,
+                     length=300,
+                     resolution=7,
+                     label='Base',
+                     font=("ProductSans", 14),
+                     cursor="hand1")
 
 hombro_s = gui.Scale(control,
-label='Hombro',
-variable=val_hombro,
-command=mov_hombro,
-from_=5,
-to=100,
-orient=HORIZONTAL,
-length=300,
-font=("ProductSans", 14),
-showvalue=True)
+                     variable=val_hombro,
+                     command=mov_hombro,
+                     from_=40,
+                     to=120,
+                     orient=HORIZONTAL,
+                     length=300,
+                     label='Hombro',
+                     font=("ProductSans", 14))
+
+brazo_s = gui.Scale(control,
+                    variable=val_brazo,
+                    command=mov_brazo,
+                    from_=50,
+                    to=130,
+                    orient=HORIZONTAL,
+                    length=300,
+                    label='Brazo',
+                    font=("ProductSans", 14))
 
 
-cuerpo_s = gui.Scale(control,
-label='Base',
-variable=val_cuerpo,
-command=mov_cuerpo,
-from_=100,
-to=80,
-orient=HORIZONTAL,
-length=300,
-font=("ProductSans", 14),
-showvalue=True,
-digits=4,
-resolution=10)
+mano1_s = gui.Scale(control,
+                    variable=val_mano1,
+                    command=mov_mano1,
+                    from_=50,
+                    to=80,
+                    orient=HORIZONTAL,
+                    length=300,
+                    resolution=30,
+                    label='Pinza',
+                    font=("ProductSans", 14))
+
 
 # mano2_s = gui.Scale(control, variable=val_mano2, command=mov_mano2, to=180, orient=HORIZONTAL, length=300,
 #                     label='Pitch: Elevación', font=("ProductSans", 14))
-
 # mano3_s = gui.Scale(control, variable=val_mano3, command=mov_mano3, to=180, orient=HORIZONTAL, length=300,
 #                     label='Yaw: Cabeceo', font=("ProductSans", 14))
-
 # pinza_s = gui.Scale(control, variable=val_pinza, command=mov_pinza, to=90, orient=HORIZONTAL, length=300,
 #                     label='Herramienta', font=("ProductSans", 14))
 
 # Botones para el control
-btn_guardar = gui.Button(text="Guardar posición",
-                        command=guarda_pos,
-                        pady=1,
-                        width=20,
-                        bg="#6f70fb",
-                        bd=5,
-                        height=2,
-                        relief="raised",
-                        borderwidth=5,
-                        font=("ProductSans", 14),
-                        cursor="")
+btn_home = gui.Button(text="⌂ Ir a home ⌂ ",
+# btn_guardar = gui.Button(text="Guardar posición", command=guarda_pos, pady=1, width=20, bg="#1E90FF", bd=5,height=2, relief="raised", borderwidth=5, font=("ProductSans", 14), cursor="pencil")
+# btn_run = gui.Button(text="Ejecutar", command=trayectoria, pady=1, width=20, bg="green", bd=5, height=2,relief="raised", borderwidth=5, font=("ProductSans", 14), cursor="exchange")
 
-btn_run = gui.Button(text="Ejecutar",
-                    command=trayectoria,
-                    pady=1,
-                    width=20,
-                    bg="#00ff75",
-                    bd=5,
-                    height=2,
-                    relief="raised",
-                    borderwidth=5,
-                    font=("ProductSans", 14),
-                    cursor="exchange")
+                      command=home_robot,
+                      pady=1,
+                      width=20,
+                      fg="#ffffff",
+                      bg="#134074",
+                      bd=5,
+                      height=2,
+                      relief="raised",
+                      borderwidth=5,
+                      font=("ProductSans", 20,),
+                      cursor="dotbox")
 
-btn_home = gui.Button(text="Ir a home",
-                    pady=1,
-                    command=home_robot,
-                    width=20,
-                    bg="#ff5e5e",
-                    bd=5,
-                    height=2,
-                    relief="raised",
-                    borderwidth=5,
-                    font=("ProductSans", 14),
-                    cursor="target")
+
+
+
 
 # Distribución de cada elemento en la interfaz del robot
-mano1_s.grid(row=2, column=1, sticky="nsew")        #PINZA
-brazo_s.grid(row=3, column=1, sticky="nsew")        #BRAZO
-hombro_s.grid(row=4, column=1, sticky="nsew")       #HOMBRO
-cuerpo_s.grid(row=5, column=1, sticky="nsew")       #BASE
+cuerpo_s.grid(row=0, column=0, sticky="nsew")
+hombro_s.grid(row=1, column=0, sticky="nsew")
+brazo_s.grid(row=2, column=0, sticky="nsew")
+mano1_s.grid(row=3, column=0, sticky="nsew")
 # mano2_s.grid(row=4, column=0, sticky="nsew")
 # mano3_s.grid(row=5, column=0, sticky="nsew")
 # pinza_s.grid(row=6, column=0, sticky="nsew")
-btn_guardar.grid(row=4, column=4, sticky="nsew")
-btn_run.grid(row=5, column=4, sticky="nsew")
-btn_home.grid(row=6, column=4, sticky="nsew")
-
-fondo = gui.Label(control, image=img).grid(row=1, column=6, sticky="nsew", rowspan=8)                                   #IMAGE
-
-#^ ESPACIOS
-space00 = Label(control, text="  ", width=5)
-space00.grid(row=0, column=0, rowspan=8)
-
-space03 = Label(control, text="  ", width=1)
-space03.grid(row=0, column=3, rowspan=8)
-
-space05 = Label(control, text="  ", width=2)
-space05.grid(row=0, column=5, rowspan=6)
-
-space07 = Label(control, text="  ", width=10)
-space07.grid(row=0, column=7, rowspan=8)
+# btn_guardar.grid(row=4, column=1, sticky="nsew")
+# btn_run.grid(row=5, column=1, sticky="nsew")
+btn_home.grid(row=4, column=0, sticky="")  
 
 
+#bfd200
+#ff0000
+#27a300
+#134074
+#ffea00
+
+
+fondo = gui.Label(control, image=img).grid(row=0, column=1, sticky="nsew", rowspan=4)
 
 # Ejecuta la interfaz
 control.mainloop()
 
-# git commit -m "cambios en el codigo de arduino para calibrar el brazo, asi mismo calibracion en el codigo de pyhton del servo motor de la base de 360G"
+
+#base 80-100
+#pinza 0-71
+#hombro 51-150
+#codo 29-120
