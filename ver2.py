@@ -6,7 +6,7 @@ import time
 import numpy as np
 import serial
 
-Simulación de comunicación serial
+# Simulación de comunicación serial
 class SerialSimulation:
     def __init__(self):
         self.buffer = ""
